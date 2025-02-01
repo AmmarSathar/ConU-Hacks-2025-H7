@@ -5,3 +5,6 @@ folium
 haversine
 fastapi
 pydantic
+uvicorn
+joblib
+python-dotenv
