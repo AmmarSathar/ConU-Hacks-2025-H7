@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
-import { Button, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Button } from "@mui/material";
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
