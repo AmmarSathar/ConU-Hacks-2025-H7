@@ -1,0 +1,36 @@
+version: '3'
+services:
+  web:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+  
+  api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - ML_SERVICE_URL=http://ml-service:8000
+      - MONGODB_URI=mongodb://mongo:27017/wildfire
+    depends_on:
+      - mongo
+      - ml-service
+
+  ml-service:
+    build: ./ml_service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml_service/models:/app/models
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
