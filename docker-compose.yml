@@ -19,7 +19,7 @@ services:
       - ml-service
 
   ml-service:
-    build: ./ml_service
+    build: ./MlService
     ports:
       - "8000:8000"
     volumes:
