@@ -1,24 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ResourceDeployment from './components/ResourceDeployment';
+import PredictionDashboard from './components/PredictionDashboard';
+import Reports from './components/Reports';
+import './styles/main.scss';
 
 function App() {
+  const [report, setReport] = useState(null); // Define setReport in the parent component
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <h1>Wildfire Response & Prediction</h1>
+        <Routes>
+          {/* Pass setReport as a prop to ResourceDeployment */}
+          <Route 
+            exact 
+            path="/" 
+            element={<ResourceDeployment setReport={setReport} />} 
+          />
+          <Route path="/prediction" element={<PredictionDashboard />} />
+          <Route 
+            path="/reports" 
+            element={<Reports report={report} />} 
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
