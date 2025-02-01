@@ -5,8 +5,8 @@ import pandas as pd
 import os
 
 app = FastAPI()
-model = joblib.load('../Models/wildfire_model.pkl')
-le = joblib.load('../Models/label_encoder.pkl')
+model = joblib.load('Models/wildfire_model.pkl')
+le = joblib.load('Models/label_encoder.pkl')
 
 class PredictionRequest(BaseModel):
     start_date: str
