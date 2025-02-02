@@ -31,6 +31,17 @@ services:
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y mongodb-database-tools &&
+        docker-entrypoint.sh mongod
+      "
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongodb_data:

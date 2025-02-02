@@ -1,10 +1,18 @@
 #!/bin/bash
 set -e
 
-echo "Importing future environmental data..."
-mongoimport --db wildfire --collection future_environmental_data.csv --type csv --headerline --file /docker-entrypoint-initdb.d/future_environmental_data.csv
+# Wait for MongoDB to become healthy (native check)
+until mongosh --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
+  sleep 1
+done
 
-echo "Importing historical wildfire data..."
-mongoimport --db wildfire --collection historical_wildfiredata.csv --type csv --headerline --file /docker-entrypoint-initdb.d/historical_wildfiredata.csv
+echo "Importing data..."
+mongoimport --db wildfire --collection environmentdatas \
+  --type csv --headerline \
+  --file /docker-entrypoint-initdb.d/future_environmental_data.csv
 
-echo "Database seeding completed."
+mongoimport --db wildfire --collection historicalwildfiredata \
+  --type csv --headerline \
+  --file /docker-entrypoint-initdb.d/historical_wildfiredata.csv
+
+echo "Seeding completed."

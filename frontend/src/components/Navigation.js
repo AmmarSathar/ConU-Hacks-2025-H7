@@ -22,7 +22,7 @@ const CustomDrawer = styled(Drawer)(({ theme }) => ({
 }));
 
 const CustomListItem = styled(ListItem)(({ theme }) => ({
-  margin: '20px 0', // Add vertical margin
+  margin: '0px 0', // Add vertical margin
 }));
 
 const CustomButton = styled(Button)(({ theme }) => ({
@@ -54,6 +54,11 @@ const Navigation = () => {
           <CustomListItem>
             <CustomButton component={Link} to="/reports">
               Live Tracker
+            </CustomButton>
+          </CustomListItem>
+          <CustomListItem>
+            <CustomButton component={Link} to="/historical">
+              Historical
             </CustomButton>
           </CustomListItem>
         </List>
