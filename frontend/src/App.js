@@ -6,14 +6,20 @@ import LiveTracker from './components/LiveTracker';
 import Navigation from './components/Navigation';
 import './styles/main.scss';
 import Historical from './components/Historical';
+import FireChatbot from "./components/FireChatbot";
 
 
 function App() {
   const [report, setReport] = useState(null); // Define setReport in the parent component
 
   return (
+    
     <Router>
       <div className="App" style={{ display: 'flex' }}>
+      <div>
+
+      <FireChatbot />
+    </div>
         <Navigation />
         
         <div style={{ flexGrow: 1}}> {/* Adjust marginLeft to match Drawer width */}
