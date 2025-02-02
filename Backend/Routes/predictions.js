@@ -82,19 +82,26 @@ router.post('/predict-range', async (req, res) => {
     }
   });
 
-  router.post('/optimize', upload.single('csvFile'), async (req, res) => {
+  router.post('/optimize', upload.single('csv_file'), async (req, res) => { // Changed from 'csvFile' to 'csv_file'
     try {
         if (!req.file) {
             return res.status(400).json({ error: "No file uploaded" });
         }
 
+        // Create FormData-like structure for FastAPI
+        const formData = new FormData();
+        formData.append('csv_file', req.file.buffer, {
+            filename: 'data.csv',
+            contentType: 'text/csv'
+        });
+
         const response = await axios.post(
             `${process.env.ML_SERVICE_URL}/optimize-resources`,
-            req.file.buffer,
+            formData.getBuffer(),
             {
                 headers: {
-                    'Content-Type': 'text/csv',
-                    'Content-Disposition': 'attachment; filename=data.csv'
+                    ...formData.getHeaders(),
+                    'Content-Length': formData.getLengthSync()
                 }
             }
         );
