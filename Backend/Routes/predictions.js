@@ -11,10 +11,10 @@ router.post('/predict-range', async (req, res) => {
         // Fetch data from MongoDB
         const data = await EnvironmentData.find({
             timestamp: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
+              $gte: new Date(new Date(startDate).setHours(0, 0, 0)),
+              $lte: new Date(new Date(endDate).setHours(23, 59, 59))
             }
-        }).sort({ timestamp: 1 }).lean();
+          }).sort({ timestamp: 1 }).lean();
 
         if (!data.length) {
             return res.status(404).json({ error: "No data found" });
@@ -29,9 +29,18 @@ router.post('/predict-range', async (req, res) => {
             }))
         );
 
+        // Validate ML response
+        if (!response.data?.predictions || !Array.isArray(response.data.predictions)) {
+            throw new Error('Invalid response format from ML service');
+        }
+        
+        if (response.data.predictions.length !== data.length) {
+            throw new Error('Prediction count mismatch with input data');
+        }
+
         // Format response
         const results = data.map((entry, index) => ({
-            timestamp: entry.timestamp,
+            timestamp: entry.timestamp.toISOString(),
             temperature: entry.temperature,
             humidity: entry.humidity,
             wind_speed: entry.wind_speed,
@@ -41,9 +50,16 @@ router.post('/predict-range', async (req, res) => {
             latitude: entry.latitude,
             longitude: entry.longitude,
             fire_risk: response.data.predictions[index]
-        }));
-
-        res.json(results);
+          }));
+          
+          res.json({
+            data: results,
+            columns: [
+              'timestamp', 'temperature', 'humidity', 'wind_speed',
+              'precipitation', 'vegetation_index', 'human_activity_index',
+              'latitude', 'longitude', 'fire_risk'
+            ]
+          });
 
     } catch (error) {
         console.error('Prediction error:', error);

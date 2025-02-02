@@ -31,6 +31,12 @@ services:
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y mongodb-database-tools netcat &&
+        docker-entrypoint.sh mongod
+      "
 
 volumes:
   mongodb_data:
