@@ -1,8 +1,10 @@
 import express from 'express';
 import axios from 'axios';
+import multer from 'multer';
 import EnvironmentData from '../Models/EnvironmentData.js';
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/predict-range', async (req, res) => {
     try {
@@ -79,6 +81,32 @@ router.post('/predict-range', async (req, res) => {
       });
     }
   });
-  
+
+  router.post('/optimize', upload.single('csvFile'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+
+        const response = await axios.post(
+            `${process.env.ML_SERVICE_URL}/optimize-resources`,
+            req.file.buffer,
+            {
+                headers: {
+                    'Content-Type': 'text/csv',
+                    'Content-Disposition': 'attachment; filename=data.csv'
+                }
+            }
+        );
+
+        res.json(response.data);
+    } catch (error) {
+        console.error('Optimization error:', error);
+        res.status(500).json({
+            error: 'Optimization failed',
+            details: error.response?.data || error.message
+        });
+    }
+});
 
 export default router;
