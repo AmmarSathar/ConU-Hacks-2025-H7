@@ -1,146 +1,269 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Papa from "papaparse";
-import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import { Button, TextField, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faParachuteBox, faTruck, faHelicopter, faPlane, faCampground } from "@fortawesome/free-solid-svg-icons";
+import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { Link } from "react-router-dom"; // Import Link
 
 function ResourceDeployment({ setReport }) {
   const [wildfireData, setWildfireData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [severityCounts, setSeverityCounts] = useState({ low: 0, medium: 0, high: 0 });
+  const [resources, setResources] = useState({
+    smokeJumpers: { available: 5, cost: 5000, time: 30 },
+    fireEngines: { available: 10, cost: 2000, time: 60 },
+    helicopters: { available: 3, cost: 8000, time: 45 },
+    tankerPlanes: { available: 2, cost: 15000, time: 120 },
+    groundCrews: { available: 8, cost: 3000, time: 90 },
+  });
+  const [severityFilter, setSeverityFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState({ startDate: "", endDate: "" });
 
-  // **TRACK HOVER STATE FOR EACH RESOURCE**
-  const [hoveredResource, setHoveredResource] = useState(null);
+  // Handle file upload and parse CSV data
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        complete: (result) => {
+          setWildfireData(result.data);
+          setFilteredData(result.data); // Initialize filtered data
+        },
+        header: true,
+      });
+    }
+  };
 
-  useEffect(() => {
-    const counts = { low: 0, medium: 0, high: 0 };
-    filteredData.forEach((fire) => {
-      if (fire.severity === "low") counts.low += 1;
-      if (fire.severity === "medium") counts.medium += 1;
-      if (fire.severity === "high") counts.high += 1;
+  // Optimize resource deployment based on fire data and resource availability
+  const handleOptimizeDeployment = () => {
+    let addressedFires = [];
+    let missedFires = [];
+    let operationalCost = 0;
+    let missedCost = 0;
+
+    const fireData = filteredData
+      .map((fire) => ({
+        ...fire,
+        severityLevel: getSeverityCost(fire.severity),
+      }))
+      .sort((a, b) => b.severityLevel - a.severityLevel);
+
+    fireData.forEach((fire) => {
+      const { severity } = fire;
+      const allocatedResource = allocateResources(severity);
+
+      if (allocatedResource) {
+        operationalCost += allocatedResource.cost;
+        addressedFires.push({ ...fire, resourceUsed: allocatedResource });
+      } else {
+        missedFires.push(fire);
+        missedCost += getDamageCost(severity);
+      }
     });
-    setSeverityCounts(counts);
-  }, [filteredData]);
+
+    setReport({
+      firesAddressed: addressedFires.length,
+      firesDelayed: missedFires.length,
+      operationalCost,
+      missedCost,
+    });
+
+    setWildfireData(addressedFires.concat(missedFires));
+  };
+
+  // Filter fires based on severity and date range
+  const handleSeverityFilterChange = (event) => {
+    const selectedSeverity = event.target.value;
+    setSeverityFilter(selectedSeverity);
+    filterFires(selectedSeverity, dateFilter);
+  };
+
+  // Update date filter and reapply filtering
+  const handleDateFilterChange = (startOrEnd, value) => {
+    const updatedDateFilter = { ...dateFilter, [startOrEnd]: value };
+    setDateFilter(updatedDateFilter);
+    filterFires(severityFilter, updatedDateFilter);
+  };
+
+  // Function to filter fires based on severity and date range
+  const filterFires = (severity, dateRange) => {
+    const filtered = wildfireData.filter((fire) => {
+      const fireDate = new Date(fire.timestamp);
+      const isSeverityMatch = severity ? fire.severity === severity : true;
+      const isDateMatch =
+        (dateRange.startDate ? fireDate >= new Date(dateRange.startDate) : true) &&
+        (dateRange.endDate ? fireDate <= new Date(dateRange.endDate) : true);
+      return isSeverityMatch && isDateMatch;
+    });
+    setFilteredData(filtered);
+  };
+
+  // Allocate resources based on fire severity
+  const allocateResources = (severity) => {
+    let resource = null;
+    if (severity === "high" && resources.smokeJumpers.available > 0) {
+      resource = { type: "Smoke Jumpers", ...resources.smokeJumpers };
+      resources.smokeJumpers.available--;
+    } else if (severity === "high" && resources.helicopters.available > 0) {
+      resource = { type: "Helicopters", ...resources.helicopters };
+      resources.helicopters.available--;
+    } else if (severity === "medium" && resources.fireEngines.available > 0) {
+      resource = { type: "Fire Engines", ...resources.fireEngines };
+      resources.fireEngines.available--;
+    } else if (severity === "low" && resources.groundCrews.available > 0) {
+      resource = { type: "Ground Crews", ...resources.groundCrews };
+      resources.groundCrews.available--;
+    }
+    return resource;
+  };
+
+  // Calculate damage cost based on fire severity
+  const getDamageCost = (severity) => {
+    switch (severity) {
+      case "high":
+        return 200000;
+      case "medium":
+        return 100000;
+      case "low":
+        return 50000;
+      default:
+        return 0;
+    }
+  };
+
+  // Return severity-based cost for prioritizing fires
+  const getSeverityCost = (severity) => {
+    switch (severity) {
+      case "high":
+        return 3;
+      case "medium":
+        return 2;
+      case "low":
+        return 1;
+      default:
+        return 0;
+    }
+  };
+
+  // Return severity attributes (color and radius) for map display
+  const getSeverityAttributes = (severity) => {
+    switch (severity) {
+      case "high":
+        return { color: "#8B0000", radius: 12 }; // Dark Red
+      case "medium":
+        return { color: "#FF8C00", radius: 10 }; // Dark Orange
+      case "low":
+        return { color: "#006400", radius: 8 }; // Dark Green
+      default:
+        return { color: "gray", radius: 8 };
+    }
+  };
 
   return (
-    <div style={{ position: "relative", height: "100vh", width: "100vw", overflow: "hidden" }}>
-      
-      {/* Heading for "Deployed Resources" */}
-      <div style={{ position: "absolute", top: "10px", left: "15%", color: "#FFA500", fontSize: "14px", fontWeight: "light", zIndex: 20 }}>
-        <h1>Deployed Resources</h1>
-        <p style={{ fontSize: "10px", marginTop: "0px" }}>
-          <span style={{ color: "#008000", fontWeight: "bold" }}>Low: {severityCounts.low} </span>{"  "}
-          <span style={{ color: "#FFD700", fontWeight: "bold" }}>Medium: {severityCounts.medium} </span> {"  "}
-          <span style={{ color: "#FF0000", fontWeight: "bold" }}>High: {severityCounts.high} </span>
-        </p>
+    <div>
+      <h2>Resource Deployment Optimization</h2>
+
+      <input type="file" accept=".csv" onChange={handleFileUpload} />
+
+      {/* Severity Filter */}
+      <div style={{ marginTop: "20px" }}>
+        <FormControl fullWidth>
+          <InputLabel>Severity Filter</InputLabel>
+          <Select value={severityFilter} onChange={handleSeverityFilterChange} label="Severity Filter">
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="high">High</MenuItem>
+            <MenuItem value="medium">Medium</MenuItem>
+            <MenuItem value="low">Low</MenuItem>
+          </Select>
+        </FormControl>
       </div>
 
-      {/* Full-page Map */}
-      <MapContainer center={[45.5017, -73.5673]} zoom={6} style={{ position: "absolute", top: 0, left: 0, width: "100vw", height: "100vh", zIndex: 0 }}>
-        <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}" />
+      {/* Date Filter */}
+      <div style={{ marginTop: "20px" }}>
+        <TextField
+          label="Start Date"
+          type="date"
+          value={dateFilter.startDate}
+          onChange={(e) => handleDateFilterChange("startDate", e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          label="End Date"
+          type="date"
+          value={dateFilter.endDate}
+          onChange={(e) => handleDateFilterChange("endDate", e.target.value)}
+          InputLabelProps={{ shrink: true }}
+          style={{ marginLeft: "10px" }}
+        />
+      </div>
+
+      {/* Optimize Deployment Button */}
+      <Button variant="contained" onClick={handleOptimizeDeployment} style={{ marginTop: "20px" }}>
+        Optimize Deployment
+      </Button>
+
+      {/* Navigate to Reports Page Button */}
+      <Link to="/reports">
+        <Button variant="outlined" style={{ marginTop: "20px", marginLeft: "10px" }}>
+          View Reports
+        </Button>
+      </Link>
+
+      {/* Map Display */}
+      <MapContainer center={[46.8139, -71.2082]} zoom={8} style={{ height: "400px", width: "100%", marginTop: "20px" }}>
+
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {filteredData.length > 0 &&
+          filteredData.map((fire, index) => {
+            if (fire.location) {
+              const location = fire.location.split(",");
+              const lat = parseFloat(location[0]);
+              const lng = parseFloat(location[1]);
+
+              if (!isNaN(lat) && !isNaN(lng)) {
+                const { color, radius } = getSeverityAttributes(fire.severity);
+                const missedCost = getDamageCost(fire.severity);
+                const resource = fire.resourceUsed;
+
+                return (
+                  <CircleMarker key={index} center={[lat, lng]} pathOptions={{ color, fillColor: color, fillOpacity: 0.6 }} radius={radius}>
+                    <Popup>
+                      <h3>🔥 Fire Report</h3>
+                      <strong>Timestamp:</strong> {fire.timestamp}<br />
+                      <strong>Severity:</strong> {fire.severity}<br />
+                      {resource ? (
+                        <>
+                          <h4>🛠 Resources Used:</h4>
+                          <table border="1">
+                            <thead>
+                              <tr>
+                                <th>Resource</th>
+                                <th>Cost</th>
+                                <th>Deployment Time</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{resource.type}</td>
+                                <td>${resource.cost.toLocaleString()}</td>
+                                <td>{resource.time} min</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <p><strong>💰 Total Cost:</strong> ${resource.cost.toLocaleString()}</p>
+                        </>
+                      ) : (
+                        <>
+                          <h4>⚠️ Fire Missed</h4>
+                          <p><strong>🔥 Damage Cost:</strong> ${missedCost.toLocaleString()}</p>
+                        </>
+                      )}
+                    </Popup>
+                  </CircleMarker>
+                );
+              }
+            }
+            return null;
+          })}
       </MapContainer>
-
-      {/* UI Overlay */}
-      <div style={{
-        position: "absolute",
-        top: "40px",
-        left: "70%",
-        background: "rgba(255, 255, 255, 0.6)",
-        padding: "20px",
-        borderRadius: "8px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-        zIndex: 10,
-        width: "350px"
-      }}>
-        <h2 style={{ textAlign: "center", color: "#333" }}>Available Resources</h2>
-
-        {/* 🚀 Firefighting Units */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "15px" }}>
-
-          {/* Smoke Jumpers */}
-          <div 
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", textAlign: "center" }}
-            onMouseEnter={() => setHoveredResource("smokeJumpers")}
-            onMouseLeave={() => setHoveredResource(null)}
-          >
-            <FontAwesomeIcon icon={faParachuteBox} size="2x" style={{ color: "#FFA500" }} />
-            <strong style={{ fontSize: "14px", marginTop: "5px" }}>Smoke Jumpers</strong>
-            {hoveredResource === "smokeJumpers" && (
-              <p style={{ fontSize: "12px", color: "#000", marginTop: "5px", transition: "opacity 0.3s ease-in-out" }}>
-                30 min, $5,000, 5 units
-              </p>
-            )}
-          </div>
-
-          {/* Fire Engines */}
-          <div 
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", textAlign: "center" }}
-            onMouseEnter={() => setHoveredResource("fireEngines")}
-            onMouseLeave={() => setHoveredResource(null)}
-          >
-            <FontAwesomeIcon icon={faTruck} size="2x" style={{ color: "#FFA500" }} />
-            <strong style={{ fontSize: "14px", marginTop: "5px" }}>Fire Engines</strong>
-            {hoveredResource === "fireEngines" && (
-              <p style={{ fontSize: "12px", color: "#000", marginTop: "5px", transition: "opacity 0.3s ease-in-out" }}>
-                1 hour, $2,000, 10 units
-              </p>
-            )}
-          </div>
-
-          {/* Helicopters */}
-          <div 
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", textAlign: "center" }}
-            onMouseEnter={() => setHoveredResource("helicopters")}
-            onMouseLeave={() => setHoveredResource(null)}
-          >
-            <FontAwesomeIcon icon={faHelicopter} size="2x" style={{ color: "#FFA500" }} />
-            <strong style={{ fontSize: "14px", marginTop: "5px" }}>Helicopters</strong>
-            {hoveredResource === "helicopters" && (
-              <p style={{ fontSize: "12px", color: "#000", marginTop: "5px", transition: "opacity 0.3s ease-in-out" }}>
-                45 min, $8,000, 3 units
-              </p>
-            )}
-          </div>
-
-          {/* Tanker Planes */}
-          <div 
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", textAlign: "center" }}
-            onMouseEnter={() => setHoveredResource("tankerPlanes")}
-            onMouseLeave={() => setHoveredResource(null)}
-          >
-            <FontAwesomeIcon icon={faPlane} size="2x" style={{ color: "#FFA500" }} />
-            <strong style={{ fontSize: "14px", marginTop: "5px" }}>Tanker Planes</strong>
-            {hoveredResource === "tankerPlanes" && (
-              <p style={{ fontSize: "12px", color: "#000", marginTop: "5px", transition: "opacity 0.3s ease-in-out" }}>
-                2 hours, $15,000, 2 units
-              </p>
-            )}
-          </div>
-
-          {/* Ground Crews */}
-          <div 
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer", textAlign: "center" }}
-            onMouseEnter={() => setHoveredResource("groundCrews")}
-            onMouseLeave={() => setHoveredResource(null)}
-          >
-            <FontAwesomeIcon icon={faCampground} size="2x" style={{ color: "#FFA500" }} />
-            <strong style={{ fontSize: "14px", marginTop: "5px" }}>Ground Crews</strong>
-            {hoveredResource === "groundCrews" && (
-              <p style={{ fontSize: "12px", color: "#000", marginTop: "5px", transition: "opacity 0.5s ease-in-out" }}>
-                1.5 hours, $3,000, 8 units
-              </p>
-            )}
-
-          {/* 🚀 Deploy Button */}
-          <Button variant="contained" style={{ marginTop: "20px", backgroundColor: "#FFA500", color: "#333", width: "50%", fontWeight: "bold" }}>
-          Deploy
-          </Button>
-          </div>
-
-        </div>
-      </div> 
     </div>
   );
 }

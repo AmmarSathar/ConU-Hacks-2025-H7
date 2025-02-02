@@ -8,9 +8,9 @@ import ResourceDeployment from './components/ResourceDeployment';
 import Predictor from './components/Predictor';
 import LiveTracker from './components/LiveTracker';
 import Navigation from './components/Navigation';
-import './styles/main.scss';
 import Historical from './components/Historical';
-import FireChatbot from "./components/FireChatbot";
+import FireChatbot from './components/FireChatbot';
+import './styles/main.scss';
 
 // Styled toggle button
 const ToggleButton = styled(Button)({
@@ -19,14 +19,14 @@ const ToggleButton = styled(Button)({
   textTransform: 'none',
   color: '#333',
   fontSize: '1.3rem',
-  backgroundColor: '#FFA500', 
+  backgroundColor: '#FFA500',
   '&:hover': {
     backgroundColor: '#e69500',
   },
   position: 'fixed',
   top: 10,
   left: 10,
-  zIndex: 1500
+  zIndex: 1500,
 });
 
 function App() {
@@ -47,7 +47,8 @@ function App() {
         <div style={{ flexGrow: 1, marginLeft: sidebarOpen ? 240 : 0 }}>
           {/* Sidebar Toggle Button */}
           <ToggleButton onClick={toggleSidebar}>
-            {sidebarOpen ? <CloseIcon style={{ marginRight: 8 }} /> : <MenuIcon style={{ marginRight: 8 }} />} 
+            {sidebarOpen ? <CloseIcon style={{ marginRight: 8 }} /> : <MenuIcon style={{ marginRight: 8 }} />}
+            Toggle Sidebar
           </ToggleButton>
 
           {/* Routes */}
