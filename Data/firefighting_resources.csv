@@ -1,0 +1,6 @@
+resources_type,deployment_time(minutes), cost_per_operation,units_available, total_units
+Smoke Jumpers,30,5000,5,5
+Fire Engines,60,2000,10, 10
+Helicopters,45,8000,3, 3
+Tanker Planes,120,15000,2, 2
+Ground Crews,90,3000, 8, 8

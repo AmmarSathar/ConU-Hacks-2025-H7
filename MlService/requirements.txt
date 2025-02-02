@@ -1,0 +1,10 @@
+numpy
+pandas
+scikit-learn
+folium
+haversine
+fastapi
+pydantic
+uvicorn
+joblib
+python-dotenv
