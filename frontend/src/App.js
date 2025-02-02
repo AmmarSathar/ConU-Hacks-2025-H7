@@ -20,6 +20,7 @@ function App() {
             element={<ResourceDeployment setReport={setReport} />} 
           />
           <Route path="/prediction" element={<PredictionDashboard />} />
+          {/* Pass the report prop to the Reports page */}
           <Route 
             path="/reports" 
             element={<Reports report={report} />} 

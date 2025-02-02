@@ -3,6 +3,7 @@ import Papa from "papaparse";
 import { Button, TextField, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { Link } from "react-router-dom"; // Import Link
 
 function ResourceDeployment({ setReport }) {
   const [wildfireData, setWildfireData] = useState([]);
@@ -199,8 +200,16 @@ function ResourceDeployment({ setReport }) {
         Optimize Deployment
       </Button>
 
+      {/* Navigate to Reports Page Button */}
+      <Link to="/reports">
+        <Button variant="outlined" style={{ marginTop: "20px", marginLeft: "10px" }}>
+          View Reports
+        </Button>
+      </Link>
+
       {/* Map Display */}
-      <MapContainer center={[51.505, -0.09]} zoom={2} style={{ height: "400px", width: "100%", marginTop: "20px" }}>
+      <MapContainer center={[46.8139, -71.2082]} zoom={8} style={{ height: "400px", width: "100%", marginTop: "20px" }}>
+
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {filteredData.length > 0 &&
           filteredData.map((fire, index) => {
