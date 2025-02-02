@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import multer from 'multer';
+import FormData from 'form-data'; 
 import EnvironmentData from '../Models/EnvironmentData.js';
 
 const router = express.Router();
@@ -82,7 +83,7 @@ router.post('/predict-range', async (req, res) => {
     }
   });
 
-  router.post('/optimize', upload.single('csv_file'), async (req, res) => { // Changed from 'csvFile' to 'csv_file'
+  router.post('/optimize', upload.single('csv_file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: "No file uploaded" });
@@ -91,8 +92,8 @@ router.post('/predict-range', async (req, res) => {
         // Create FormData-like structure for FastAPI
         const formData = new FormData();
         formData.append('csv_file', req.file.buffer, {
-            filename: 'data.csv',
-            contentType: 'text/csv'
+            filename: req.file.originalname,
+            contentType: req.file.mimetype,
         });
 
         const response = await axios.post(
