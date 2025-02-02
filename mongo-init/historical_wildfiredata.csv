@@ -1,4 +1,4 @@
-timestamp,fire_start_time,location,severity,latitude,longitude
+timestamp.date,fire_start_time,location,severity,latitude,longitude
 2020-01-09T03:00:00,2020-01-09 02:20:00,"45.0836,-73.3206",low,45.0836,-73.3206
 2020-02-02T03:00:00,2020-02-02 02:46:00,"45.8719,-73.9053",medium,45.8719,-73.9053
 2020-02-16T17:00:00,2020-02-16 16:57:00,"44.6907,-73.6182",low,44.6907,-73.6182
