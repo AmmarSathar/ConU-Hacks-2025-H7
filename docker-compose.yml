@@ -6,9 +6,9 @@ services:
       - "3000:3000"
     depends_on:
       - api
-  
+      
   api:
-    build: ./Backend
+    build: ./Backend/Server  # Changed path
     ports:
       - "5000:5000"
     environment:
@@ -23,7 +23,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./ml_service/models:/app/models
+      - ./MlService/Models:/app/models
 
   mongo:
     image: mongo:latest
