@@ -1,12 +1,12 @@
 version: '3'
 services:
-  web:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - api
-      
+  # web:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - api
+
   api:
     build: ./Backend/Server  # Changed path
     ports:
