@@ -3,7 +3,7 @@ import heapq
 from collections import defaultdict
 
 # Load wildfire data
-wildfire_data = pd.read_csv('Backend//Data//current_wildfiredata.csv')
+wildfire_data = pd.read_csv('../../Data/current_wildfiredata.csv')
 
 # Convert fire_start_time to datetime and extract minutes since midnight
 wildfire_data["fire_start_time"] = pd.to_datetime(wildfire_data["fire_start_time"])
