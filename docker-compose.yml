@@ -8,7 +8,7 @@ services:
   #     - api
 
   api:
-    build: ./Backend/Server  # Changed path
+    build: ./Backend
     ports:
       - "5001:5000"
     environment:
