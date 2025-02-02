@@ -8,11 +8,11 @@ done
 
 echo "Importing data..."
 mongoimport --db wildfire --collection environmentdatas \
-  --type csv --headerline --columnsHaveTypes \
+  --type csv --headerline \
   --file /docker-entrypoint-initdb.d/future_environmental_data.csv
 
-mongoimport --db wildfire --collection historical_wildfiredata \
-  --type csv --headerline --columnsHaveTypes \
+mongoimport --db wildfire --collection historicalwildfiredata \
+  --type csv --headerline \
   --file /docker-entrypoint-initdb.d/historical_wildfiredata.csv
 
 echo "Seeding completed."
