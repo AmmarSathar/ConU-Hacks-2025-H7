@@ -28,9 +28,9 @@ function App() {
             variant="contained"
             color="primary"
             onClick={toggleSidebar}
-            style={{ position: 'fixed', top: 10, left: 10, zIndex: 1000 }}
+            style={{ position: 'fixed', top: 10, left: 10, zIndex: 1500 }}
           >
-            Toggle sidebar
+            C++
           </Button>
 
           <Routes>
