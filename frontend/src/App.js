@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Button } from '@mui/material';
 import ResourceDeployment from './components/ResourceDeployment';
 import Predictor from './components/Predictor';
 import LiveTracker from './components/LiveTracker';
@@ -8,40 +9,40 @@ import './styles/main.scss';
 import Historical from './components/Historical';
 import FireChatbot from "./components/FireChatbot";
 
-
 function App() {
-  const [report, setReport] = useState(null); // Define setReport in the parent component
+  const [report, setReport] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   return (
-    
     <Router>
       <div className="App" style={{ display: 'flex' }}>
-      <div>
+        {/* Sidebar Navigation */}
+        {sidebarOpen && <Navigation />}
 
-      <FireChatbot />
-    </div>
-        <Navigation />
-        
-        <div style={{ flexGrow: 1}}> {/* Adjust marginLeft to match Drawer width */}
+        <div style={{ flexGrow: 1, marginLeft: sidebarOpen ? 240 : 0 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={toggleSidebar}
+            style={{ position: 'fixed', top: 10, left: 10, zIndex: 1000 }}
+          >
+            Toggle sidebar
+          </Button>
+
           <Routes>
-            {/* Pass setReport as a prop to ResourceDeployment */}
-            <Route 
-              exact 
-              path="/" 
-              element={<ResourceDeployment setReport={setReport} />} 
-            />
+            <Route exact path="/" element={<ResourceDeployment setReport={setReport} />} />
             <Route path="/prediction" element={<Predictor />} />
-            <Route 
-              exact 
-              path="/historical" 
-              element={<Historical setReport={setReport} />} 
-            />
-            <Route 
-              path="/reports" 
-              element={<LiveTracker report={report} />} 
-            />
+            <Route exact path="/historical" element={<Historical setReport={setReport} />} />
+            <Route path="/reports" element={<LiveTracker report={report} />} />
           </Routes>
         </div>
+
+        {/* FireChatbot is placed outside for persistent accessibility */}
+        <FireChatbot />
       </div>
     </Router>
   );
