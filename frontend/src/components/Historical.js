@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Papa from "papaparse";
+import { saveAs } from "file-saver"; // <-- Import saveAs
 import { Button, TextField, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -39,6 +40,7 @@ function Historical({ setReport }) {
     }
   };
 
+  // Save filteredData as CSV
   const saveReport = () => {
     const data = filteredData.map(item => ({
       timestamp: item.timestamp,
@@ -106,103 +108,105 @@ function Historical({ setReport }) {
       {/* UI Overlay */}
       <div
         style={{
-            position: "absolute",
-            top: "40px",
-            left: "70%",
-            transform: "translateX(-20%)",
-            background: "rgba(255, 255, 255, 0.6)",
-            color: "orange",
-            padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
-            zIndex: 10,
+          position: "absolute",
+          top: "40px",
+          left: "70%",
+          transform: "translateX(-20%)",
+          background: "rgba(255, 255, 255, 0.6)",
+          color: "orange",
+          padding: "20px",
+          borderRadius: "8px",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+          zIndex: 10,
         }}
-        >
+      >
         <h2>Historical Analysis</h2>
 
         <input type="file" accept=".csv" onChange={handleFileUpload} style={{ color: "white" }} />
 
         {/* Severity Filter */}
         <FormControl fullWidth style={{ marginTop: "10px", background: "#444", color: "red", borderRadius: "4px" }}>
-            <InputLabel style={{ color: "black" }}>Severity Filter</InputLabel>
-            <Select
+          <InputLabel style={{ color: "black" }}>Severity Filter</InputLabel>
+          <Select
             value={severityFilter}
             onChange={(e) => setSeverityFilter(e.target.value)}
             style={{ color: "black", background: "#555" }}
-            >
+          >
             <MenuItem value="">All</MenuItem>
             <MenuItem value="high">High</MenuItem>
             <MenuItem value="medium">Medium</MenuItem>
             <MenuItem value="low">Low</MenuItem>
-            </Select>
+          </Select>
         </FormControl>
 
         {/* Date Filters */}
         <TextField
-            label="Start Date"
-            type="date"
-            value={dateFilter.startDate}
-            onChange={(e) => setDateFilter({ ...dateFilter, startDate: e.target.value })}
-            InputLabelProps={{ shrink: true, style: { color: "black" } }}
-            style={{ marginTop: "10px", background: "#444", color: "white", borderRadius: "4px" }}
+          label="Start Date"
+          type="date"
+          value={dateFilter.startDate}
+          onChange={(e) => setDateFilter({ ...dateFilter, startDate: e.target.value })}
+          InputLabelProps={{ shrink: true, style: { color: "black" } }}
+          style={{ marginTop: "10px", background: "#444", color: "white", borderRadius: "4px" }}
         />
         <TextField
-            label="End Date"
-            type="date"
-            value={dateFilter.endDate}
-            onChange={(e) => setDateFilter({ ...dateFilter, endDate: e.target.value })}
-            InputLabelProps={{ shrink: true, style: { color: "black" } }}
-            style={{ marginTop: "10px", marginLeft: "10px", background: "#444", color: "white", borderRadius: "4px" }}
+          label="End Date"
+          type="date"
+          value={dateFilter.endDate}
+          onChange={(e) => setDateFilter({ ...dateFilter, endDate: e.target.value })}
+          InputLabelProps={{ shrink: true, style: { color: "black" } }}
+          style={{ marginTop: "10px", marginLeft: "10px", background: "#444", color: "white", borderRadius: "4px" }}
         />
 
         {/* Navigation */}
         <Link to="/reports">
-            <Button
+          <Button
             variant="contained"
             style={{
-                marginTop: "10px",
-                backgroundColor: "#FFA500",
-                color: "#333333",
-                fontWeight: "bold",
-                padding: "10px 20px",
+              marginTop: "10px",
+              backgroundColor: "#FFA500",
+              color: "#333333",
+              fontWeight: "bold",
+              padding: "10px 20px",
             }}
-            >
+          >
             View Reports
-            </Button>
+          </Button>
         </Link>
-        <Button
-            variant="contained"
-            style={{
-                marginTop: "10px",
-                marginLeft: "10px",
-                backgroundColor: "#FFA500",
-                color: "#333333",
-                fontWeight: "bold",
-                padding: "10px 20px",
-            }}
-            onClick={saveReport}
-        >
-            Save Report
-        </Button>
-        <Button
-            variant="contained"
-            style={{
-                marginTop: "10px",
-                marginLeft: "10px",
-                backgroundColor: "#FFA500",
-                color: "#333333",
-                fontWeight: "bold",
-                padding: "10px 20px",
-            }}
-            onClick={predict}
-        >
-            Predict
-        </Button>
-        </div>
 
+        {/* Save Report */}
+        <Button
+          variant="contained"
+          style={{
+            marginTop: "10px",
+            marginLeft: "10px",
+            backgroundColor: "#FFA500",
+            color: "#333333",
+            fontWeight: "bold",
+            padding: "10px 20px",
+          }}
+          onClick={saveReport}
+        >
+          Save Report
+        </Button>
+
+        {/* Predict (Placeholder) */}
+        <Button
+          variant="contained"
+          style={{
+            marginTop: "10px",
+            marginLeft: "10px",
+            backgroundColor: "#FFA500",
+            color: "#333333",
+            fontWeight: "bold",
+            padding: "10px 20px",
+          }}
+          onClick={predict}
+        >
+          Predict
+        </Button>
+      </div>
     </div>
   );
 }
 
 export default Historical;
-
