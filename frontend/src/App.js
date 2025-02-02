@@ -48,7 +48,6 @@ function App() {
           {/* Sidebar Toggle Button */}
           <ToggleButton onClick={toggleSidebar}>
             {sidebarOpen ? <CloseIcon style={{ marginRight: 8 }} /> : <MenuIcon style={{ marginRight: 8 }} />} 
-            Toggle Sidebar
           </ToggleButton>
 
           {/* Routes */}
