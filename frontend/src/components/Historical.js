@@ -39,6 +39,24 @@ function Historical({ setReport }) {
     }
   };
 
+  const saveReport = () => {
+    const data = filteredData.map(item => ({
+      timestamp: item.timestamp,
+      severity: item.severity,
+      location: item.location,
+      status: item.status,
+      operationalCost: item.operationalCost,
+      missedCost: item.missedCost
+    }));
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], {type: "text/csv;charset=utf-8"});
+    saveAs(blob, "wildfire_report.csv");
+  };
+
+  const predict = () => {
+    console.log("Predict button clicked");
+  };
+
   return (
     <div style={{ position: "relative", height: "100vh", width: "100vw", overflow: "hidden" }}>
       {/* Full-page Map */}
@@ -73,7 +91,7 @@ function Historical({ setReport }) {
                   radius={10}
                 >
                   <Popup>
-                    <strong>🔥 Fire Report</strong><br />
+                    <strong>Fire Report</strong><br />
                     Timestamp: {fire.timestamp}<br />
                     Severity: {fire.severity}
                   </Popup>
@@ -152,6 +170,34 @@ function Historical({ setReport }) {
             View Reports
             </Button>
         </Link>
+        <Button
+            variant="contained"
+            style={{
+                marginTop: "10px",
+                marginLeft: "10px",
+                backgroundColor: "#FFA500",
+                color: "#333333",
+                fontWeight: "bold",
+                padding: "10px 20px",
+            }}
+            onClick={saveReport}
+        >
+            Save Report
+        </Button>
+        <Button
+            variant="contained"
+            style={{
+                marginTop: "10px",
+                marginLeft: "10px",
+                backgroundColor: "#FFA500",
+                color: "#333333",
+                fontWeight: "bold",
+                padding: "10px 20px",
+            }}
+            onClick={predict}
+        >
+            Predict
+        </Button>
         </div>
 
     </div>
@@ -159,3 +205,4 @@ function Historical({ setReport }) {
 }
 
 export default Historical;
+

@@ -1,10 +1,13 @@
-// Reports.js (updated)
-import React from 'react';
+// Reports.js
+import React, { useState } from 'react';
+import axios from 'axios';
 import { Button } from '@mui/material';
 import { saveAs } from 'file-saver';
 
 function Reports({ report }) {
-  // Enhanced download function with error handling
+  const [optimizationResult, setOptimizationResult] = useState(null);
+
+  // Existing function for local CSV
   const downloadReport = () => {
     if (!report) {
       alert('No report available to download!');
@@ -30,6 +33,43 @@ function Reports({ report }) {
     }
   };
 
+  // New function for calling your /optimize endpoint
+  const handleOptimize = async () => {
+    try {
+      if (!report) {
+        alert('No report data available to optimize!');
+        return;
+      }
+
+      // Build CSV text from the existing 'report' object
+      const csvRows = [];
+      csvRows.push(["Metric", "Value"]);
+      csvRows.push(["Fires Addressed", report?.firesAddressed || 0]);
+      csvRows.push(["Fires Delayed", report?.firesDelayed || 0]);
+      csvRows.push(["Operational Cost", report?.operationalCost || 0]);
+      csvRows.push(["Missed Cost", report?.missedCost || 0]);
+
+      const csvString = csvRows.map(row => row.join(",")).join("\n");
+
+      const formData = new FormData();
+      const csvBlob = new Blob([csvString], { type: 'text/csv' });
+      // Key must match 'csv_file' in your router.post('/optimize')
+      formData.append('csv_file', csvBlob, 'report.csv');
+
+      const response = await axios.post('/api/predictions/optimize', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      setOptimizationResult(response.data);
+
+    } catch (error) {
+      console.error('Error optimizing resources:', error);
+      alert('Optimization failed. Check console for details.');
+    }
+  };
+
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <h2 style={{ color: '#FFA500', borderBottom: '2px solid #FFA500' }}>
@@ -50,7 +90,8 @@ function Reports({ report }) {
               <p>Missed: ${report.missedCost.toLocaleString()}</p>
             </div>
           </div>
-          
+
+          {/* Existing Download button */}
           <Button 
             variant="contained" 
             onClick={downloadReport}
@@ -65,6 +106,31 @@ function Reports({ report }) {
           >
             Download Full Report (CSV)
           </Button>
+
+          {/* New Optimize button */}
+          <Button
+            variant="contained"
+            onClick={handleOptimize}
+            style={{
+              marginTop: "25px",
+              marginLeft: "10px",
+              backgroundColor: "#FFA500",
+              color: "#333",
+              fontWeight: "bold",
+              padding: "12px 30px",
+              fontSize: "1.1rem"
+            }}
+          >
+            Optimize Resources
+          </Button>
+
+          {/* Show optimization result JSON */}
+          {optimizationResult && (
+            <div style={{ marginTop: '20px' }}>
+              <h3>Optimization Result</h3>
+              <pre>{JSON.stringify(optimizationResult, null, 2)}</pre>
+            </div>
+          )}
         </div>
       ) : (
         <div style={{ 
