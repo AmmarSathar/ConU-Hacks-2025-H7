@@ -208,7 +208,8 @@ function ResourceDeployment({ setReport }) {
       </Link>
 
       {/* Map Display */}
-      <MapContainer center={[46.8139, -71.2082]} zoom={8} style={{ height: "400px", width: "100%", marginTop: "20px" }}>
+      <MapContainer center={[45.5017, -73.5673]} zoom={10} style={{ height: "400px", width: "100%", marginTop: "20px" }}>
+
 
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {filteredData.length > 0 &&
