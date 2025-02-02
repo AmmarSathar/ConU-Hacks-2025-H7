@@ -1,6 +1,6 @@
 import React from "react";
 
-function Reports({ report }) {
+function LiveTracker({ report }) {
   return (
     <div>
       <h2>Fire Deployment Report</h2>
@@ -18,4 +18,4 @@ function Reports({ report }) {
   );
 }
 
-export default Reports;
+export default LiveTracker;

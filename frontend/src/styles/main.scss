@@ -2,7 +2,7 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f4f4f46d;
     padding: 20px;
   }
   
@@ -18,9 +18,33 @@ body {
   
   th, td {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #f4f4f46d;
     text-align: left;
   }
 
+  .resource-deployment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  
+    .deployment-container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1200px; // Adjust as needed
+  
+      .controls {
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+  
+      .map-container {
+        width: 60%;
+      }
+    }
+  }
   
   

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ResourceDeployment from './components/ResourceDeployment';
-import PredictionDashboard from './components/PredictionDashboard';
-import Reports from './components/Reports';
-import Header from './components/Header';
+import ResourceDeployment from './components/Deployment';
+import Predictor from './components/Predictor';
+import LiveTracker from './components/LiveTracker';
 import Navigation from './components/Navigation';
 import './styles/main.scss';
 
@@ -15,8 +14,6 @@ function App() {
       <div className="App" style={{ display: 'flex' }}>
         <Navigation />
         <div style={{ flexGrow: 1, marginLeft: 240 }}> {/* Adjust marginLeft to match Drawer width */}
-          <Header />
-          <h1>Wildfire Response & Prediction</h1>
           <Routes>
             {/* Pass setReport as a prop to ResourceDeployment */}
             <Route 
@@ -24,10 +21,10 @@ function App() {
               path="/" 
               element={<ResourceDeployment setReport={setReport} />} 
             />
-            <Route path="/prediction" element={<PredictionDashboard />} />
+            <Route path="/prediction" element={<Predictor />} />
             <Route 
               path="/reports" 
-              element={<Reports report={report} />} 
+              element={<LiveTracker report={report} />} 
             />
           </Routes>
         </div>

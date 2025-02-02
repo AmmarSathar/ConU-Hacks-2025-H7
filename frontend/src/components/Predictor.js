@@ -3,7 +3,7 @@ import Papa from "papaparse";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Button } from "@mui/material";
 
-function PredictionDashboard() {
+function Predictor() {
   const [predictionData, setPredictionData] = useState([]);
 
   const handleFileUpload = (event) => {
@@ -17,7 +17,7 @@ function PredictionDashboard() {
 
   return (
     <div>
-      <h2>Prediction Dashboard</h2>
+      <h2>Predictor</h2>
       <input type="file" accept=".csv" onChange={handleFileUpload} />
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={predictionData}>
@@ -33,4 +33,4 @@ function PredictionDashboard() {
   );
 }
 
-export default PredictionDashboard;
+export default Predictor;
