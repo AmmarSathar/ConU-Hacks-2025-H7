@@ -44,7 +44,7 @@ function App() {
         {sidebarOpen && <Navigation />}
 
         {/* Main Content */}
-        <div style={{ flexGrow: 1, marginLeft: sidebarOpen ? 240 : 0 }}>
+        <div style={{ flexGrow: 1, marginLeft: sidebarOpen ? 0 : 0 }}>
           {/* Sidebar Toggle Button */}
           <ToggleButton onClick={toggleSidebar}>
             {sidebarOpen ? <CloseIcon style={{ marginRight: 8 }} /> : <MenuIcon style={{ marginRight: 8 }} />}
@@ -52,9 +52,9 @@ function App() {
 
           {/* Routes */}
           <Routes>
-            <Route exact path="/" element={<ResourceDeployment setReport={setReport} />} />
+            {/* <Route exact path="/" element={<ResourceDeployment setReport={setReport} />} /> */}
             <Route path="/prediction" element={<Predictor />} />
-            <Route exact path="/historical" element={<Historical setReport={setReport} />} />
+            <Route exact path="/" element={<Historical setReport={setReport} />} />
             <Route path="/reports" element={<LiveTracker report={report} />} />
           </Routes>
         </div>
@@ -67,3 +67,4 @@ function App() {
 }
 
 export default App;
+

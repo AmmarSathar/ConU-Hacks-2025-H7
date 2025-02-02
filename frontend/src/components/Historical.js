@@ -11,15 +11,30 @@ function Historical({ setReport }) {
   const [severityFilter, setSeverityFilter] = useState("");
   const [dateFilter, setDateFilter] = useState({ startDate: "", endDate: "" });
 
+  const generateReport = (data) => {
+    // Calculate report metrics from historical data
+    const reportData = {
+      firesAddressed: data.filter(item => item.status === 'addressed').length,
+      firesDelayed: data.filter(item => item.status === 'delayed').length,
+      operationalCost: data.reduce((sum, item) => sum + Number(item.operationalCost || 0), 0),
+      missedCost: data.reduce((sum, item) => sum + Number(item.missedCost || 0), 0)
+    };
+
+    setReport(reportData);
+  };
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       Papa.parse(file, {
         complete: (result) => {
-          setWildfireData(result.data);
-          setFilteredData(result.data);
+          const validData = result.data.filter(item => item.timestamp && item.location);
+          setWildfireData(validData);
+          setFilteredData(validData);
+          generateReport(validData); // Generate report when data loads
         },
         header: true,
+        skipEmptyLines: true
       });
     }
   };

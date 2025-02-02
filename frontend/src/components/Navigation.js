@@ -46,21 +46,6 @@ const Navigation = () => {
               Deployment
             </CustomButton>
           </CustomListItem>
-          <CustomListItem>
-            <CustomButton component={Link} to="/prediction">
-              Predictor
-            </CustomButton>
-          </CustomListItem>
-          <CustomListItem>
-            <CustomButton component={Link} to="/reports">
-              Live Tracker
-            </CustomButton>
-          </CustomListItem>
-          <CustomListItem>
-            <CustomButton component={Link} to="/historical">
-              Historical
-            </CustomButton>
-          </CustomListItem>
         </List>
       </CustomDrawer>
     </>
