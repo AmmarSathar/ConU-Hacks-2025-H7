@@ -1,50 +1,78 @@
+/* filepath: /c:/Users/rpate/UHacks/Repo/ConU-Hacks-2025-H7/frontend/src/styles/main.scss */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f46d;
-    padding: 20px;
-  }
-  
-  h2 {
-    color: #333;
-  }
-  
-  table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    padding: 10px;
-    border: 1px solid #f4f4f46d;
-    text-align: left;
-  }
+  font-family: 'Outfit', sans-serif;
+  background: linear-gradient(to right, #e0f7fa, #80deea); // Add gradient background
+  padding: 20px;
+}
 
-  .resource-deployment {
+h2 {
+  color: #333;
+  text-align: center; // Center the title
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.resource-deployment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px; // Add border radius
+
+  .deployment-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  
-    .deployment-container {
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px; // Adjust as needed
+    border-radius: 10px; // Add border radius
+    overflow: hidden; // Ensure child elements respect the border radius
+
+    .controls {
+      width: 20%; // Fixed width for controls
       display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 1200px; // Adjust as needed
-  
-      .controls {
-        width: 40%;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-  
-      .map-container {
-        width: 60%;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sample-container {
+      background-color: #333; // Dark grey background
+      color: #fff; // White text color
+      padding: 20px;
+      border-radius: 30px; // Rounded corners
+      margin: 0 10px; // Reduce margin to bring it closer to the map and navigation pane
+      flex: 0 0 40%; // Fixed width to make it more square
+      height: 600px; // Increase height to make the box longer downwards
+      text-align: center; // Center the text
+      order: -1; // Move the square to the left of the map
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; // Space the inner boxes evenly
+
+      .inner-box {
+        background-color: #555; // Lighter grey background for inner boxes
+        padding: 10px;
+        border-radius: 8px; // Rounded corners for inner boxes
+        margin: 45px 0; // Vertical margin between inner boxes
+        flex: 1; // Make inner boxes take equal space
       }
     }
+
+    .map-container {
+      flex: 1; // Take the remaining space
+      border-bottom-left-radius: 30px; // Add border radius to the bottom left corner
+      border-bottom-right-radius: 30px; // Add border radius to the bottom right corner
+      overflow: hidden; // Ensure the map respects the border radius
+    }
   }
-  
-  
+}
