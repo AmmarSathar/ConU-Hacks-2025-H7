@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Link } from "react-router-dom"; 
 
-function ResourceDeployment({ setReport }) {
+function Historical({ setReport }) {
   const [wildfireData, setWildfireData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [severityFilter, setSeverityFilter] = useState("");
@@ -73,55 +73,74 @@ function ResourceDeployment({ setReport }) {
       {/* UI Overlay */}
       <div
         style={{
-          position: "absolute",
-          top: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "rgba(255, 255, 255, 0.9)",
-          padding: "20px",
-          borderRadius: "8px",
-          zIndex: 10,
+            position: "absolute",
+            top: "40px",
+            left: "70%",
+            transform: "translateX(-20%)",
+            background: "rgba(255, 255, 255, 0.6)",
+            color: "orange",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
+            zIndex: 10,
         }}
-      >
-        <h2>Resource Deployment Optimization</h2>
-        <input type="file" accept=".csv" onChange={handleFileUpload} />
+        >
+        <h2>Historical Analysis</h2>
+
+        <input type="file" accept=".csv" onChange={handleFileUpload} style={{ color: "white" }} />
 
         {/* Severity Filter */}
-        <FormControl fullWidth style={{ marginTop: "10px" }}>
-          <InputLabel>Severity Filter</InputLabel>
-          <Select value={severityFilter} onChange={(e) => setSeverityFilter(e.target.value)}>
+        <FormControl fullWidth style={{ marginTop: "10px", background: "#444", color: "red", borderRadius: "4px" }}>
+            <InputLabel style={{ color: "black" }}>Severity Filter</InputLabel>
+            <Select
+            value={severityFilter}
+            onChange={(e) => setSeverityFilter(e.target.value)}
+            style={{ color: "black", background: "#555" }}
+            >
             <MenuItem value="">All</MenuItem>
             <MenuItem value="high">High</MenuItem>
             <MenuItem value="medium">Medium</MenuItem>
             <MenuItem value="low">Low</MenuItem>
-          </Select>
+            </Select>
         </FormControl>
 
         {/* Date Filters */}
         <TextField
-          label="Start Date"
-          type="date"
-          value={dateFilter.startDate}
-          onChange={(e) => setDateFilter({ ...dateFilter, startDate: e.target.value })}
-          InputLabelProps={{ shrink: true }}
-          style={{ marginTop: "10px" }}
+            label="Start Date"
+            type="date"
+            value={dateFilter.startDate}
+            onChange={(e) => setDateFilter({ ...dateFilter, startDate: e.target.value })}
+            InputLabelProps={{ shrink: true, style: { color: "black" } }}
+            style={{ marginTop: "10px", background: "#444", color: "white", borderRadius: "4px" }}
         />
         <TextField
-          label="End Date"
-          type="date"
-          value={dateFilter.endDate}
-          onChange={(e) => setDateFilter({ ...dateFilter, endDate: e.target.value })}
-          InputLabelProps={{ shrink: true }}
-          style={{ marginTop: "10px", marginLeft: "10px" }}
+            label="End Date"
+            type="date"
+            value={dateFilter.endDate}
+            onChange={(e) => setDateFilter({ ...dateFilter, endDate: e.target.value })}
+            InputLabelProps={{ shrink: true, style: { color: "black" } }}
+            style={{ marginTop: "10px", marginLeft: "10px", background: "#444", color: "white", borderRadius: "4px" }}
         />
 
         {/* Navigation */}
         <Link to="/reports">
-          <Button variant="contained" style={{ marginTop: "10px" }}>View Reports</Button>
+            <Button
+            variant="contained"
+            style={{
+                marginTop: "10px",
+                backgroundColor: "#FFA500",
+                color: "#333333",
+                fontWeight: "bold",
+                padding: "10px 20px",
+            }}
+            >
+            View Reports
+            </Button>
         </Link>
-      </div>
+        </div>
+
     </div>
   );
 }
 
-export default ResourceDeployment;
+export default Historical;

@@ -5,6 +5,8 @@ import Predictor from './components/Predictor';
 import LiveTracker from './components/LiveTracker';
 import Navigation from './components/Navigation';
 import './styles/main.scss';
+import Historical from './components/Historical';
+
 
 function App() {
   const [report, setReport] = useState(null); // Define setReport in the parent component
@@ -13,7 +15,8 @@ function App() {
     <Router>
       <div className="App" style={{ display: 'flex' }}>
         <Navigation />
-        <div style={{ flexGrow: 1, marginLeft: 240 }}> {/* Adjust marginLeft to match Drawer width */}
+        
+        <div style={{ flexGrow: 1}}> {/* Adjust marginLeft to match Drawer width */}
           <Routes>
             {/* Pass setReport as a prop to ResourceDeployment */}
             <Route 
@@ -22,6 +25,11 @@ function App() {
               element={<ResourceDeployment setReport={setReport} />} 
             />
             <Route path="/prediction" element={<Predictor />} />
+            <Route 
+              exact 
+              path="/historical" 
+              element={<Historical setReport={setReport} />} 
+            />
             <Route 
               path="/reports" 
               element={<LiveTracker report={report} />} 

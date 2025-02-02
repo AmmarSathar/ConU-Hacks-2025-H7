@@ -1,22 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap');
+
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Outfit', sans-serif;
     background-color: #f4f4f4;
-    padding: 20px;
-  }
-  
-  h2 {
+    padding: 0px;
+}
+
+h2 {
     color: #333;
-  }
-  
-  table {
+}
+
+table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
-  }
-  
-  th, td {
+}
+
+th, td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: left;
-  }
-  
+}
